@@ -3,6 +3,10 @@ session_start();
 require_once ("./api/connection.php");
 require_once ("./functions/user_input.php");
 
+if (!isset($_SESSION['isAuth'])) {
+    header("Location: login.php");
+}
+
 $cart = isset($_SESSION['cart']) ? $_SESSION['cart'] : [];
 $totalAmount = 0;
 

@@ -30,7 +30,7 @@ if ($result == 0) {
     $add_user = "   INSERT INTO `user`(`phone`, `hash`) 
                     VALUES (?, ?)";
     $stmt = mysqli_prepare($connect, $add_user);
-    mysqli_stmt_bind_param($stmt, 'sss', $phone, $hash, $confirm_password);
+    mysqli_stmt_bind_param($stmt, 'ss', $phone, $hash);
     mysqli_stmt_execute($stmt);
 
     header('Location: ../login.php');

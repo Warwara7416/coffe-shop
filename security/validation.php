@@ -29,4 +29,11 @@ if (!empty($hash)) {
         $_SESSION['id_user'] = $data['id_user'];
         header("Location: ../index.php");
     }
+    else {
+        header("Location: ../login.php");
+    }
+} else {
+    header("Location: ../login.php");
 }
+
+// header("Location: ../login.php");

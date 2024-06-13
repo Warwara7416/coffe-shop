@@ -186,6 +186,10 @@ section {
     border-bottom: 1px solid #ddd;
 }
 
+.cart-popup .btn {
+    display: inline-block;
+}
+
 .item-details {
     flex: 1;
 }
@@ -205,10 +209,6 @@ section {
 
 .quantity-controls span {
     margin: 0 10px;
-}
-
-.cart-popup .btn {
-    display: inline-block;
 }
 
 /* MENU */

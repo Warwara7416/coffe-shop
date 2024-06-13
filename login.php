@@ -15,15 +15,6 @@ $isAuth = isset($_SESSION['isAuth']) ? $_SESSION['isAuth'] : false;
 
 <body>
     <div class="container">
-        <?php if ($isAuth): ?>
-            <form action="logout.php">
-                <h2>Уже покидаете нас?</h2>
-                <button id="submit">Выйти</button>
-            </form>
-            <form action="index.php">
-                <button type="submit">Вернуться</button>
-            </form>
-        <?php else: ?>
             <form action="./security/validation.php" id="authForm" class="auth-form" method="post">
                 <h2>Авторизация</h2>
                 <div class="input-group">
@@ -54,7 +45,6 @@ $isAuth = isset($_SESSION['isAuth']) ? $_SESSION['isAuth'] : false;
                 <button type="submit">Зарегистрироваться</button>
                 <button type="button" id="toggleFormBack">Авторизация</button>
             </form>
-        <?php endif; ?>
         <div id="error-message" class="error-message"></div>
     </div>
 
