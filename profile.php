@@ -10,10 +10,11 @@ if (!isset($_SESSION['id_user'])) {
 
 $id_user = $_SESSION['id_user'];
 
-// Получение истории заказов
+// Получение истории заказов с сортировкой по дате в обратном порядке
 $orders_query = "SELECT `id_order`, `id_status`, `id_pickup_point`, `id_payment_method`, `date` 
                  FROM `orders` 
-                 WHERE `id_user` = ?";
+                 WHERE `id_user` = ?
+                 ORDER BY `date` DESC"; // Сортировка по дате в обратном порядке
 $stmt = mysqli_prepare($connect, $orders_query);
 mysqli_stmt_bind_param($stmt, "i", $id_user);
 mysqli_stmt_execute($stmt);
@@ -86,7 +87,7 @@ while ($order = mysqli_fetch_assoc($orders_result)) {
     <title>Профиль</title>
 
     <!-- Custom CSS File Link  -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/profile.css">
 
     <!-- Font Awesome CDN Link -->
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
@@ -110,22 +111,30 @@ while ($order = mysqli_fetch_assoc($orders_result)) {
 
         <div class="order-history">
             <?php foreach ($orders as $order): ?>
-                <div class="order">
-                    <h3>Заказ #<?php echo htmlspecialchars($order['id_order']); ?></h3>
-                    <p>Дата: <?php echo htmlspecialchars($order['date']); ?></p>
-                    <p>Сумма: <?php echo htmlspecialchars($order['total_amount']); ?>&#8381;</p>
-                    <p>Статус: <?php echo htmlspecialchars($order['status']); ?></p>
-                    <p>Способ оплаты: <?php echo htmlspecialchars($order['payment_method']); ?></p>
-                    <p>Точка самовывоза: <?php echo htmlspecialchars($order['pickup_point']); ?></p>
-                    <ul>
-                        <?php foreach ($order['items'] as $item): ?>
-                            <li><?php echo htmlspecialchars($item['product_name']); ?> - <?php echo htmlspecialchars($item['number']); ?> шт. - <?php echo htmlspecialchars($item['price']); ?>&#8381;</li>
-                        <?php endforeach; ?>
-                    </ul>
+                <div class="order-summary" data-order='<?php echo json_encode($order); ?>'>
+                    <span class="order-number">Заказ #<?php echo htmlspecialchars($order['id_order']); ?></span>
+                    <span class="order-date"><?php echo htmlspecialchars($order['date']); ?></span>
+                    <span class="order-total"><?php echo htmlspecialchars($order['total_amount']); ?>&#8381;</span>
+                    <span class="order-pickup"><?php echo htmlspecialchars($order['pickup_point']); ?></span>
                 </div>
             <?php endforeach; ?>
         </div>
     </section>
+
+    <!-- MODAL -->
+    <div id="order-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Заказ #<span id="modal-order-number"></span></h3>
+            <p>Дата: <span id="modal-order-date"></span></p>
+            <p>Сумма: <span id="modal-order-total"></span>&#8381;</p>
+            <p>Статус: <span id="modal-order-status"></span></p>
+            <p>Способ оплаты: <span id="modal-order-payment"></span></p>
+            <p>Точка самовывоза: <span id="modal-order-pickup"></span></p>
+            <h4>Товары:</h4>
+            <ul id="modal-order-items"></ul>
+        </div>
+    </div>
 
     <script src="js/script.js"></script>
 </body>
