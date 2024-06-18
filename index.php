@@ -6,10 +6,25 @@ session_start();
 $isAuth = isset($_SESSION['isAuth']) ? $_SESSION['isAuth'] : false;
 require_once ("./api/connection.php");
 
-$products_query = "SELECT `id_product`, `product_name`, `description`, `price` FROM `products`";
-$stmt = mysqli_prepare($connect, $products_query);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
+$categories_query = "SELECT `id_category`, `category_name` FROM `categorys`";
+$categories_stmt = mysqli_prepare($connect, $categories_query);
+mysqli_stmt_execute($categories_stmt);
+$categories_result = mysqli_stmt_get_result($categories_stmt);
+
+$products_query = "SELECT `id_product`, `product_name`, `description`, `price`, `id_category`, `img_path` FROM `products`";
+$products_stmt = mysqli_prepare($connect, $products_query);
+mysqli_stmt_execute($products_stmt);
+$products_result = mysqli_stmt_get_result($products_stmt);
+
+$categories = [];
+while ($category = mysqli_fetch_assoc($categories_result)) {
+    $categories[$category['id_category']] = $category['category_name'];
+}
+
+$products = [];
+while ($product = mysqli_fetch_assoc($products_result)) {
+    $products[$product['id_category']][] = $product;
+}
 ?>
 
 <!DOCTYPE html>
@@ -19,6 +34,8 @@ $result = mysqli_stmt_get_result($stmt);
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Coffee shop">
+    <meta name="keywords" content="Coffee, Coffee shop, Tasty coffee">
     <title>Coffee</title>
     <link rel="stylesheet" href="css/style.css">
 
@@ -69,20 +86,21 @@ $result = mysqli_stmt_get_result($stmt);
 
         <!-- MENU -->
         <section class="menu" id="menu">
-            <h1 class="heading">Меню <span>Популярные позиции</span></h1>
-
-            <div class="box-container">
-                <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                    <a class="box" data-id="<?php echo htmlspecialchars($row['id_product']); ?>" data-name="<?php echo htmlspecialchars($row['product_name']); ?>" data-price="<?php echo htmlspecialchars($row['price']); ?>">
-                        <img src="image/menu-<?php echo htmlspecialchars($row['id_product']); ?>.png" alt="">
-                        <div class="content">
-                            <h3><?php echo htmlspecialchars($row['product_name']); ?></h3>
-                            <p><?php echo htmlspecialchars($row['description']); ?></p>
-                            <span><?php echo htmlspecialchars($row['price']); ?>&#8381;</span>
-                        </div>
-                    </a>
-                <?php endwhile; ?>
-            </div>
+            <?php foreach ($products as $category_id => $products_in_category): ?>
+                <h1 class="heading">Меню <span><?php echo htmlspecialchars($categories[$category_id]); ?></span></h1>
+                <div class="box-container">
+                    <?php foreach ($products_in_category as $product): ?>
+                        <a class="box" data-id="<?php echo htmlspecialchars($product['id_product']); ?>" data-name="<?php echo htmlspecialchars($product['product_name']); ?>" data-price="<?php echo htmlspecialchars($product['price']); ?>">
+                            <img src="image/<?php echo htmlspecialchars($product['img_path']); ?>.png" alt="">
+                            <div class="content">
+                                <h3><?php echo htmlspecialchars($product['product_name']); ?></h3>
+                                <p><?php echo htmlspecialchars($product['description']); ?></p>
+                                <span><?php echo htmlspecialchars($product['price']); ?>&#8381;</span>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endforeach; ?>
         </section>
 
     </div>
